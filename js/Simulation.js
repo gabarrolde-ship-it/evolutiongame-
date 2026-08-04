@@ -383,8 +383,7 @@ class Simulation {
             this.lastUpdateTime = now;
         }
         
-        // Dessiner
-        this.draw();
+        // Dessiner les stats
         this.drawStats();
         
         this.animationId = requestAnimationFrame(() => this.gameLoop());

@@ -153,7 +153,7 @@ class Renderer {
     draw() {
         const ctx = this.ctx;
         const simulation = this.simulation;
-        const cellSize = simulation.config.cellSize * this.camera.zoom;
+        const cellSize = simulation.config.cellSize;
         const gridSize = simulation.config.gridSize;
         
         // Effacer le canvas

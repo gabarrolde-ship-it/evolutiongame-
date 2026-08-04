@@ -30,10 +30,9 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // Créer la simulation
     let simulation = null;
-    let renderer = null;
     
     function initSimulation() {
-        // Redimensionner les canvases
+        // Redimensionner le canvas
         const container = simulationCanvas.parentElement;
         const maxWidth = container.clientWidth;
         const maxHeight = window.innerHeight * 0.6;
@@ -43,13 +42,16 @@ window.addEventListener('DOMContentLoaded', () => {
         simulationCanvas.height = canvasSize;
         
         // Créer la simulation
+        if (simulation) {
+            simulation.stop();
+        }
         simulation = new Simulation(simulationCanvas, statsCanvas, config);
-        
-        // Créer le renderer
-        renderer = new Renderer(simulationCanvas, simulation);
         
         // Mettre à jour l'interface
         updateUI();
+        
+        // Dessiner une première fois
+        drawSimulation();
     }
     
     function updateUI() {
@@ -57,9 +59,72 @@ window.addEventListener('DOMContentLoaded', () => {
         mutationRateValue.textContent = `${mutationRateInput.value}%`;
         simSpeedValue.textContent = simSpeedInput.value;
         
+        // Mettre à jour les compteurs de la simulation
+        if (simulation) {
+            document.getElementById('dayCounter').textContent = simulation.day;
+            document.getElementById('creatureCount').textContent = simulation.creatures.length;
+            document.getElementById('avgAge').textContent = simulation.stats.avgAge.length > 0 
+                ? simulation.stats.avgAge[simulation.stats.avgAge.length - 1].toFixed(1) 
+                : '0';
+            document.getElementById('avgEnergy').textContent = simulation.stats.avgEnergy.length > 0 
+                ? simulation.stats.avgEnergy[simulation.stats.avgEnergy.length - 1].toFixed(1) 
+                : '0';
+            document.getElementById('dominantBiome').textContent = simulation.environment.getDominantBiome() || '-';
+        }
+        
         // Activer/désactiver les boutons
         startBtn.disabled = simulation && simulation.running && !simulation.paused;
         pauseBtn.disabled = !(simulation && simulation.running && !simulation.paused);
+    }
+    
+    function drawSimulation() {
+        if (!simulation) return;
+        
+        const ctx = simulationCanvas.getContext('2d');
+        const cellSize = simulation.config.cellSize;
+        const gridSize = simulation.config.gridSize;
+        
+        // Effacer le canvas
+        ctx.clearRect(0, 0, simulationCanvas.width, simulationCanvas.height);
+        
+        // Dessiner l'environnement
+        for (let y = 0; y < gridSize; y++) {
+            for (let x = 0; x < gridSize; x++) {
+                const biome = simulation.environment.getBiome(x, y);
+                if (biome) {
+                    ctx.fillStyle = biome.getColor();
+                    ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+                    
+                    // Dessiner les ressources
+                    const resource = simulation.environment.getResource(x, y);
+                    if (resource && resource.amount > 0) {
+                        ctx.fillStyle = resource.getColor();
+                        ctx.globalAlpha = 0.7;
+                        ctx.beginPath();
+                        ctx.arc(
+                            x * cellSize + cellSize / 2,
+                            y * cellSize + cellSize / 2,
+                            cellSize * 0.3,
+                            0, Math.PI * 2
+                        );
+                        ctx.fill();
+                        ctx.globalAlpha = 1;
+                    }
+                }
+            }
+        }
+        
+        // Dessiner les créatures
+        for (const creature of simulation.creatures) {
+            creature.draw(ctx, cellSize);
+        }
+        
+        // Dessiner les informations de la météo
+        const weather = simulation.environment.getWeather();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        ctx.font = '14px Arial';
+        ctx.textAlign = 'left';
+        ctx.fillText(`Jour: ${simulation.day} | Météo: ${weather.getWeatherDescription()} | Créatures: ${simulation.creatures.length}`, 10, 20);
     }
     
     // Événements des boutons
@@ -87,10 +152,6 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     
     resetBtn.addEventListener('click', () => {
-        if (simulation) {
-            simulation.stop();
-        }
-        
         // Mettre à jour la configuration
         config = {
             gridSize: parseInt(gridSizeInput.value),
@@ -109,14 +170,8 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         
         if (simulation) {
-            if (!simulation.running) {
-                simulation.start();
-            }
-            
             simulation.step();
-            if (renderer) {
-                renderer.update();
-            }
+            drawSimulation();
         }
         
         updateUI();
@@ -149,9 +204,7 @@ window.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', () => {
         if (simulation) {
             simulation.resizeCanvas();
-        }
-        if (renderer) {
-            renderer.resizeCanvas();
+            drawSimulation();
         }
     });
     
@@ -161,9 +214,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // Boucle de rendu
     function renderLoop() {
         if (simulation && simulation.running) {
-            if (renderer) {
-                renderer.update();
-            }
+            drawSimulation();
         }
         
         requestAnimationFrame(renderLoop);
@@ -173,7 +224,6 @@ window.addEventListener('DOMContentLoaded', () => {
     
     // Exposer les objets globaux pour le débogage
     window.simulation = simulation;
-    window.renderer = renderer;
 });
 
 // ============================================
@@ -188,44 +238,4 @@ function generateId() {
 // Formate un nombre
 function formatNumber(num) {
     return num.toFixed(2);
-}
-
-// Convertit HSL en RGB
-function hslToRgb(h, s, l) {
-    s /= 100;
-    l /= 100;
-    
-    const c = (1 - Math.abs(2 * l - 1)) * s;
-    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
-    const m = l - c / 2;
-    
-    let r = 0, g = 0, b = 0;
-    
-    if (h >= 0 && h < 60) {
-        r = c; g = x; b = 0;
-    } else if (h >= 60 && h < 120) {
-        r = x; g = c; b = 0;
-    } else if (h >= 120 && h < 180) {
-        r = 0; g = c; b = x;
-    } else if (h >= 180 && h < 240) {
-        r = 0; g = x; b = c;
-    } else if (h >= 240 && h < 300) {
-        r = x; g = 0; b = c;
-    } else if (h >= 300 && h < 360) {
-        r = c; g = 0; b = x;
-    }
-    
-    r = Math.round((r + m) * 255);
-    g = Math.round((g + m) * 255);
-    b = Math.round((b + m) * 255);
-    
-    return `rgb(${r}, ${g}, ${b})`;
-}
-
-// ============================================
-// EXPORT
-// ============================================
-
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { initSimulation, generateId, formatNumber, hslToRgb };
 }
