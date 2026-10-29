@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulateur d'Investissement</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="invest.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Simulateur d'Investissement</h1>
+        <p class="subtitle">
+            <a href="index.html" class="nav-link">&larr; Retour au jeu d'&eacute;volution</a>
+        </p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="startDate">Date de d&eacute;part:</label>
+                <input type="month" id="startDate" min="1950-01" max="2023-06" value="2000-01">
+            </div>
+
+            <div class="control-group">
+                <label for="duration">Dur&eacute;e (ann&eacute;es):</label>
+                <input type="number" id="duration" min="1" max="73" value="20">
+            </div>
+
+            <div class="control-group">
+                <label for="initialCapital">Capital initial (&euro;):</label>
+                <input type="number" id="initialCapital" min="0" step="1000" value="10000">
+            </div>
+
+            <div class="control-group">
+                <label for="monthlyContribution">Versement mensuel (&euro;):</label>
+                <input type="number" id="monthlyContribution" min="0" step="50" value="200">
+            </div>
+
+            <div class="control-group">
+                <label for="stockAllocation">Part actions lump sum (%):</label>
+                <input type="range" id="stockAllocation" min="0" max="100" value="100">
+                <span id="stockAllocationValue">100%</span>
+            </div>
+
+            <div class="control-group">
+                <label for="dcaMonths">DCA : investissement du capital sur (mois):</label>
+                <input type="number" id="dcaMonths" min="1" max="60" value="12">
+            </div>
+
+            <button id="simulateBtn">Simuler</button>
+            <button id="resetBtn">R&eacute;initialiser</button>
+        </div>
+
+        <div class="simulation-info" id="summaryInfo">
+            <div class="info-item">
+                <span class="info-label">P&eacute;riode</span>
+                <span id="periodLabel">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Capital investi</span>
+                <span id="investedLabel">-</span>
+            </div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="chartCanvas"></canvas>
+        </div>
+
+        <div class="stats-panel">
+            <h3>Comparaison des strat&eacute;gies</h3>
+            <table id="statsTable">
+                <thead>
+                    <tr>
+                        <th>Strat&eacute;gie</th>
+                        <th>Valeur finale</th>
+                        <th>Valeur r&eacute;elle (inflation)</th>
+                        <th>Rendement annualis&eacute;</th>
+                        <th>Plus forte baisse</th>
+                        <th>Volatilit&eacute; annualis&eacute;e</th>
+                    </tr>
+                </thead>
+                <tbody id="statsBody">
+                </tbody>
+            </table>
+        </div>
+
+        <div class="legend">
+            <h3>L&eacute;gende</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background:#00ff88"></div>
+                    <span class="legend-label">Lump sum (tout investi d'un coup)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background:#00d4ff"></div>
+                    <span class="legend-label">DCA (investissement progressif)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background:#ffaa00"></div>
+                    <span class="legend-label">60/40 (60% actions / 40% obligations, r&eacute;&eacute;quilibr&eacute; chaque ann&eacute;e)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background:#888;border-style:dashed"></div>
+                    <span class="legend-label">Capital investi (r&eacute;f&eacute;rence)</span>
+                </div>
+            </div>
+            <p class="data-note">
+                Donn&eacute;es historiques mensuelles r&eacute;elles : S&amp;P 500 (rendement total, dividendes r&eacute;investis),
+                obligations du Tr&eacute;sor am&eacute;ricain 10 ans et inflation (CPI) &mdash; source Robert Shiller, 1950&ndash;2023.
+                Ce simulateur est &eacute;ducatif et ne constitue pas un conseil en investissement.
+            </p>
+        </div>
+    </div>
+
+    <script src="js/invest/market-data.js"></script>
+    <script src="js/invest/Engine.js"></script>
+    <script src="js/invest/Chart.js"></script>
+    <script src="js/invest/invest-main.js"></script>
+</body>
+</html>

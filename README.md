@@ -2,6 +2,8 @@
 
 Une simulation d'évolution en tour par tour avec visualisation Canvas. Ce projet simule un écosystème où des créatures évoluent avec des caractéristiques physiques et comportementales qui apparaissent aléatoirement et sont sélectionnées par la sélection naturelle.
 
+Le dépôt contient aussi un **simulateur d'investissement financier** (`invest.html`) : comparaison de stratégies (lump sum, DCA, 60/40) sur des données de marché historiques réelles.
+
 ## Fonctionnalités
 
 ### Environnement
@@ -56,6 +58,20 @@ Une simulation d'évolution en tour par tour avec visualisation Canvas. Ce proje
 
 1. Clonez le dépôt ou téléchargez les fichiers
 2. Ouvrez le fichier `index.html` dans un navigateur web moderne
+
+## Simulateur d'investissement (`invest.html`)
+
+Ouvrez `invest.html` dans un navigateur. Aucune installation ni connexion requise : les données de marché sont embarquées dans `js/invest/market-data.js`.
+
+- **Paramètres** : date de départ (1950-2023), durée, capital initial, versement mensuel, part d'actions, durée du DCA
+- **Stratégies comparées** :
+  - **Lump sum** : tout le capital investi dès le départ
+  - **DCA** : le capital initial investi progressivement sur N mois, le reste en obligations en attendant
+  - **60/40** : 60 % actions / 40 % obligations, rééquilibré chaque année
+- **Indicateurs** : valeur finale nominale et réelle (corrigée de l'inflation), rendement annualisé (CAGR), plus forte baisse (max drawdown), volatilité annualisée
+- **Données** : rendements totaux mensuels réels du S&P 500 (dividendes réinvestis), obligations du Trésor US 10 ans et inflation (CPI), source Robert Shiller, 1950-2023
+
+> Avertissement : outil éducatif, ce n'est pas un conseil en investissement.
 
 ## Utilisation
 
