@@ -1,0 +1,84 @@
+.subtitle {
+    text-align: center;
+    margin: -15px 0 25px 0;
+}
+
+.nav-link {
+    color: #00d4ff;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.nav-link:hover {
+    text-decoration: underline;
+}
+
+#simulateBtn {
+    background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+}
+
+#resetBtn {
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+}
+
+#chartCanvas {
+    width: 100%;
+    height: 420px;
+    background: #0a0a15;
+    border-radius: 15px;
+    border: 2px solid rgba(0, 212, 255, 0.3);
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.1);
+}
+
+.stats-panel table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.stats-panel th,
+.stats-panel td {
+    padding: 10px 12px;
+    text-align: right;
+    border-bottom: 1px solid rgba(0, 212, 255, 0.15);
+}
+
+.stats-panel th:first-child,
+.stats-panel td:first-child {
+    text-align: left;
+}
+
+.stats-panel th {
+    color: #00d4ff;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.stats-panel td.pos {
+    color: #00ff88;
+}
+
+.stats-panel td.neg {
+    color: #ff6666;
+}
+
+.stats-panel tbody tr:hover {
+    background: rgba(0, 212, 255, 0.05);
+}
+
+.data-note {
+    margin-top: 15px;
+    font-size: 0.8rem;
+    color: #888;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    #chartCanvas {
+        height: 300px;
+    }
+
+    .stats-panel {
+        overflow-x: auto;
+    }
+}
